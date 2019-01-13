@@ -2,7 +2,7 @@ import sys
 
 #Is there right amount of parameters
 if len(sys.argv) != 2:
-    print ("Give only one filename (e.g. 'ass29.py text1.txt')")
+    print ("Give only one filename (e.g. 'asgmt29.py text1.txt')")
 
 else:
     #Test if file exists
