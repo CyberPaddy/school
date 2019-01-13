@@ -1,3 +1,5 @@
+### Assignment 2
+
 Make a "euro calculator" in PHP
 The program converts the requested amount of euros into Finnish marks.
 An HTML form and PHP code are kept in the same file.
