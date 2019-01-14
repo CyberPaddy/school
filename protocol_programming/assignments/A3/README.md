@@ -1,4 +1,4 @@
-### Assignment 3
+### Assignment 3 (2 points)
 
 ##### Make the following modifications to the server example from assignment 2:
 <p>Add two command line parameters to the program:</p>
