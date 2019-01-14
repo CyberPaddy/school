@@ -28,7 +28,7 @@ Handle the exceptions from <i>connect()</i> and <i>send()</i> and print a human 
 
 <p><b>Hints:</b></p>
 
-<ul>
+<ol>
 <li><i>argv</i> from <i>sys</i> module contains the command line parameters passed to the application. It is a list so <i>len()</i> works for it as well.</li>
 <li>How to make server wait for other connections? while x until a server admin presses a key?</li>
-</ul>
+</ol>
