@@ -17,7 +17,7 @@ Keep the server running after a single connection has been handled.</p>
 </ul>
 
 ##### Make the following modifications to the client example from assignment 2:
-<p style="margin-left='10px'">Add two command line parameters to the program:</p>
+<p style="padding-left='20px'">Add two command line parameters to the program:</p>
 <ul>
 <li>Address</li>
 <li>Port</li>
