@@ -17,7 +17,7 @@ Keep the server running after a single connection has been handled.</p>
 </ul>
 
 ##### Make the following modifications to the client example from assignment 2:
-<p style="padding-left='20px'">Add two command line parameters to the program:</p>
+<p>Add two command line parameters to the program:</p>
 <ul>
 <li>Address</li>
 <li>Port</li>
@@ -25,3 +25,10 @@ Keep the server running after a single connection has been handled.</p>
 
 <p>If these two values are not given from the command line the client should print an error message and exit immediately<br />
 Handle the exceptions from <i>connect()</i> and <i>send()</i> and print a human readable error message if an error occurs</p>
+
+<p><b>Hints:</b></p>
+
+<ul>
+<ol><i>argv</i> from <i>sys</i> module contains the command line parameters passed to the application. It is a list so <i>len()</i> works for it as well.</ol>
+<ol>How to make server wait for other connections? while x until a server admin presses a key?</ol>
+</ul>
