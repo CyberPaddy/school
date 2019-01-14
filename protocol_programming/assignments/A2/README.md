@@ -1,4 +1,4 @@
-### Assignment 2
+### Assignment 2 (2 points)
 
 <p>Modify the client and the server example (from the material) to work correctly for arbitrarily sized messages.</p>
 
