@@ -6,7 +6,7 @@ rm -fr -- !(db2directories.sh)
 search="SELECT product_name FROM products ORDER BY product_id;"
 db="K9100_3"
 
-haunTulokset=$(mysql -u K9100 -pM7fMqMcrHpRuRMKlJkYYizh0a5d0dw41 -h mysql.labranet.jamk.fi -D $db -e "$search" -E)
+haunTulokset=$(mysql -u K9100 -p -h mysql.labranet.jamk.fi -D $db -e "$search" -E)
 #echo $haunTulokset
 
 hakuTulosArray=(${haunTulokset})

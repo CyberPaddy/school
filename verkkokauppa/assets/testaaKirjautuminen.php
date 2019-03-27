@@ -8,7 +8,7 @@ $password      = isset($_POST['pass'])     ? $_POST['pass'] : '';
 if($username != '' && $password != '' && $changePassword !== true) {
 $sql = <<<SQLEND
 SELECT username, passwd, isAdmin FROM users
-WHERE username LIKE '{$username}' AND passwd LIKE AES_ENCRYPT('{$password}', 'PekkaTopohanta69')
+WHERE username LIKE '{$username}' AND passwd LIKE AES_ENCRYPT('{$password}', '*NOT_REAL_KEY*')
 LIMIT 1;
 SQLEND;
 

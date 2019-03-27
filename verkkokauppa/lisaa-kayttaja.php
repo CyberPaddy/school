@@ -23,7 +23,7 @@ $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
 if($username != '' && $existingUser['username'] != $username &&  $fname != '' && $lname != '' && $passwd != '' && $bday != '' && $_SESSION['LoggedIn'] != '' && $_SESSION['isAdmin'] == true) {
 $sql = <<<SQLEND
 INSERT INTO users (username, fname, lname, passwd, bday, address, post, country, balance, isAdmin)
-VALUES (:username, :fname, :lname, AES_ENCRYPT(:passwd, 'PekkaTopohanta69'), :bday, :address, :post, :country, :balance, :isAdmin)
+VALUES (:username, :fname, :lname, AES_ENCRYPT(:passwd, '*NOT_REAL_KEY*'), :bday, :address, :post, :country, :balance, :isAdmin)
 SQLEND;
 
 

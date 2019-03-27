@@ -8,7 +8,7 @@ if (isset($_POST['loginBtn']) && (!isset($_SESSION['LoggedIn']) || $_SESSION['Lo
 $kayt = $_POST['user'];
 $pass = $_POST['pass'];
 $passu = $db->prepare("SELECT username, passwd FROM users WHERE username LIKE '{$kayt}' AND passwd
-LIKE AES_ENCRYPT('{$pass}', 'PekkaTopohanta69');");
+LIKE AES_ENCRYPT('{$pass}', '*NOT_REAL_KEY*');");
 $passu->execute();
 
 $row = $passu->fetch(PDO::FETCH_ASSOC);

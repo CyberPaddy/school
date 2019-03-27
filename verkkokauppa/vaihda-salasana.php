@@ -11,13 +11,13 @@ $pass =		isset($_POST['pass']) ? $_POST['pass'] : '';
 # Testaus onko molemmat annettu
 if ($user != '' && $pass != '') {
 
-$stmt = $db->prepare("SELECT username, passwd FROM users WHERE username LIKE '{$user}' AND passwd LIKE AES_ENCRYPT('Vaihda123', 'PekkaTopohanta69');");
+$stmt = $db->prepare("SELECT username, passwd FROM users WHERE username LIKE '{$user}' AND passwd LIKE AES_ENCRYPT('Vaihda123', '*NOT_REAL_KEY*');");
 $stmt->execute();
 
 # Jos käyttäjällä on oletuspassu "Vaihda123"
 if ($stmt->fetch(PDO::FETCH_ASSOC) != NULL) {
 
-$stmt = $db->prepare("UPDATE users SET passwd=AES_ENCRYPT('{$pass}', 'PekkaTopohanta69') WHERE username LIKE '{$user}';");
+$stmt = $db->prepare("UPDATE users SET passwd=AES_ENCRYPT('{$pass}', '*NOT_REAL_KEY*') WHERE username LIKE '{$user}';");
 $stmt->execute();
 echo "<p><b>{$user}</b> käyttäjä aktivoitu! <a href='kirjaudu.php'>Kirjaudu sisään!</a></p>";
 }
@@ -57,7 +57,7 @@ if(isset($_POST['loggedPasswdBtn'])) {
 if ($user != '' && $oldPass != '' && $newPass != '' && $newPass2 != '') {
 
 $stmt = $db->prepare("SELECT username, passwd FROM users WHERE username LIKE '{$user}' AND passwd
-LIKE AES_ENCRYPT('{$oldPass}', 'PekkaTopohanta69');");
+LIKE AES_ENCRYPT('{$oldPass}', '*NOT_REAL_KEY*');");
 $stmt->execute();
 
 # Jos käyttäjän vanha passu oli väärin
@@ -66,7 +66,7 @@ if ($stmt->fetch(PDO::FETCH_ASSOC) == NULL) {
   echo "<p><b>Väärä vanha salasana!</b></p>";
 }
 elseif ($newPass == $newPass2) {
-$stmt = $db->prepare("UPDATE users SET passwd=AES_ENCRYPT('{$newPass}', 'PekkaTopohanta69') WHERE username LIKE '{$user}';");
+$stmt = $db->prepare("UPDATE users SET passwd=AES_ENCRYPT('{$newPass}', '*NOT_REAL_KEY*') WHERE username LIKE '{$user}';");
 $stmt->execute();
 echo "<p><b>$user käyttäjän salasana vaihdettu!</b></p>";
 }
