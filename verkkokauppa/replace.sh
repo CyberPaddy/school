@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script replaces all ocurrences of first command line argument ($1) with second ($2) from this directory and all subdirectorys
+
 if [ $# -lt 2 ] || [ $# -gt 2 ]; then
   echo "Anna 2 argumenttia: <vaihdettava> <tuleva>"
 
