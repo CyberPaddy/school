@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 
-<title>Huig verkkokauppa</title>
+<title>Huikea verkkokauppa</title>
 <link rel="stylesheet" type="text/css" href="style.css">
 
 <div id='wrapper'>
@@ -93,7 +93,7 @@ $row = $testBalance->fetch(PDO::FETCH_ASSOC);
 if($row['balance']-$less >= 0) {
 
 # Vähennä rahamäärä käyttäjältä
-$stmt = $db->prepare("UPDATE users SET balance=balance-{$less} WHERE username LIKE '{$_SESSION['LoggedIn']}';");
+$stmt = $db->prepare("UPDATE users SET balance=(balance-{$less}) WHERE username LIKE '{$_SESSION['LoggedIn']}';");
 $stmt->execute();
 
 # Lisää tuotteet käyttäjän kirjastoon
@@ -123,8 +123,8 @@ if ($less != 0) {
   $less_str = number_format($less, 2, ',', '');
   $lessEcho = "<p><b>{$less_str}€ vähennetty tililtä!</b></p>";
 $maksettu = true;
-
 }
+else $ilmainen = true;
 
 }
 
