@@ -24,7 +24,7 @@ require('assets/get_uid.php');
 
 if (!empty($got_uid))	 $fkUserId = $got_uid['user_id'];
 
-$get_game_name = $db->prepare("SELECT game_name FROM userLibrary WHERE fk_user_id like '{$fkUserId}';");
+$get_game_name = $db->prepare("SELECT game_name FROM userLibrary WHERE fk_user_id like '{$fkUserId}' ORDER BY game_name;");
 $get_game_name->execute();
 $got_game_name = $get_game_name->fetch(PDO::FETCH_ASSOC);
 
@@ -37,8 +37,6 @@ $output = <<<OUTPUTEND
 </tr>
 OUTPUTEND;
 echo $output;
-
-
 
 do {
 $haePeli = $db->prepare("SELECT product_name, manufacturer, genre, date FROM products WHERE
@@ -61,13 +59,8 @@ echo $output;
 echo "</table>\n";
 }
 
-
 else echo "<p>Sinulla ei ole vielä pelejä. <a href='tuotteet.php'>Osta pelejä täältä!</a></p>";
-
-
 }
-
-
 ?>
 
 <script>
