@@ -150,8 +150,21 @@ echo "</table>\n";
 # Jos ostoskorissa ei ole tuotteita kerrotaan, että se on tyhjä
 if (!isset ($_SESSION['ostoskori']) || $_SESSION['ostoskori'] == NULL) echo "<p><b>Ostoskori on tyhjä</b></p>";
 # Jos ostoskorissa on tuotteita, tulostetaan ne ja kehotetaan menemään ostoskoriin
-else echo "<p style='max-width=600px;'>Ostoskorissa olevat tuotteet: '" .  implode("', '", $_SESSION['ostoskori']) . "'. <b><a href='ostoskori.php'>Mene
+else {
+  $tuotteet_string = '';
+  $ostoskori_with_amounts = array_count_values($_SESSION['ostoskori']);
+  foreach ($ostoskori_with_amounts as $tuote => $maara) {
+    $tuotteet_string .= " $tuote";
+    if ($maara > 1) $tuotteet_string .= "($maara),";
+    else $tuotteet_string .= ",";
+  }
+  
+  # Poistetaan pilkku tekstin lopusta
+  $tuotteet_string = substr("$tuotteet_string", 0, -1);
+
+  echo "<p style='max-width=600px;'>Ostoskorissa olevat tuotteet: $tuotteet_string <b><a href='ostoskori.php'>Mene
   ostoskoriin!</a></b></p>";
+}
 
 }
 
