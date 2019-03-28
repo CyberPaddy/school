@@ -30,17 +30,6 @@ $sql .= "SELECT * FROM products WHERE product_name like '{$tuote}'";
 if ($loopNum <  count($ostoskori)-1) $sql .=  " UNION ALL ";
 else $sql .= " ORDER BY product_name";
 
-#$sql .= 'SELECT * FROM products WHERE product_name ';
-#foreach ($ostoskori as $i => $tuote) {
-#
-#if ($i == 0) {
-# $sql .= "LIKE '{$tuote}'";
-#}
-#else $sql .= " OR product_name LIKE '{$tuote}'";
-#}
-#
-#$sql .= "ORDER BY product_name";
-#
 $loopNum += 1;
 }
 }
@@ -88,23 +77,13 @@ OUTPUTEND;
 }
 echo "</table>\n";
 
-$maksaBtn = <<<OUTPUT
-<form action='maksa-ostokset.php' method='post'>
-<input type='hidden' value='{$ostosten_hinta}' name='maksettava'>
-<input type='submit' value='Lisää kirjastoosi' name='maksaBtn' class='bigBtn'>
-</form>
-<form action='maksa-ostokset.php' method='post'>
-<input type='submit' value='Tyhjennä ostoskori' name='tyhjennaBtn' class='bigBtn'
-style='width:160px;'>
-</form>
-OUTPUT;
 
 if ($ostosten_hinta != 0 && sizeOf($_SESSION['ostoskori']) != 0) 
 {
-echo $maksaBtn;
+echo lisaaMaksamispainike("Maksa {$ostosten_hinta_float_pilkulla}€", $ostosten_hinta);
 }
 elseif (sizeOf($_SESSION['ostoskori']) != 0) {
-echo $maksaBtn;
+echo lisaaMaksamispainike("Lisää kirjastoosi", $ostosten_hinta);
 
 }
 else echo "<p>Ostoskori on tyhjä! <a href='tuotteet.php'>Lisää tuotteita ostoskoriisi</a></p>";
@@ -112,6 +91,18 @@ else echo "<p>Ostoskori on tyhjä! <a href='tuotteet.php'>Lisää tuotteita osto
 
 function lisaaOstoksenHinta($ostosten_hinta, $hinta) {
     return $ostosten_hinta + $hinta;
+}
+function lisaaMaksamispainike($teksti, $ostosten_hinta) {
+return <<<OUTPUT
+<form action='maksa-ostokset.php' method='post'>
+<input type='hidden' value='{$ostosten_hinta}' name='maksettava'>
+<input type='submit' value='{$teksti}' name='maksaBtn' class='bigBtn'>
+</form>
+<form action='maksa-ostokset.php' method='post'>
+<input type='submit' value='Tyhjennä ostoskori' name='tyhjennaBtn' class='bigBtn'
+style='width:160px;'>
+</form>
+OUTPUT;
 }
 
 ?>
