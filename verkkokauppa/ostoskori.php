@@ -46,7 +46,7 @@ echo "<table id='tuoteTable'>\n";
 $output = <<<OUTPUTEND
 <tr bgcolor='#ffeedd'>
 <td>Tuote</td><td>Tyyppi</td><td>Valmistaja</td>
-<td>Hinta</td><td>Rating (0-5)</td><td>Genre</td><td>Päivämäärä</td><td></td>
+<td>Hinta</td><td>Rating</td><td>Genre</td><td>Päivämäärä</td><td></td>
 </tr>
 OUTPUTEND;
 echo $output;
@@ -64,7 +64,9 @@ $output = <<<OUTPUTEND
     <td>{$row['product_type']}</td>
     <td>{$row['manufacturer']}</td>
     <td>{$price}€</td>
-    <td>{$row['rating']}</td>
+    <td><div class='stars-outer'><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i>
+    <div class='stars-inner'><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i>{$row['rating']}</div>
+    </td>
     <td>{$row['genre']}</td>
     <td>{$row['date']}</td>
     <td><a href='ostoskori.php?poista={$row['product_name']}' id='delLink'>Poista</a></td>
@@ -104,5 +106,7 @@ style='width:160px;'>
 </form>
 OUTPUT;
 }
-
+echo "<script>";
+require("assets/drawStars.js");
+echo "</script>";
 ?>

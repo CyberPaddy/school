@@ -55,11 +55,15 @@ function teeLomake($stmt) {
   <td bgcolor='#dddddd'><input type='text' name='balance' size='30'></td>
 </tr>
 <tr valign='top'>
+  <td align='right' bgcolor='#ffeedd'>Tuottaja? (1/0)</td>
+  <td bgcolor='#dddddd'><input type='text' name='isManufacturer' size='30'></td>
+</tr>
+<tr valign='top'>
   <td align='right' bgcolor='#ffeedd'>Admin? (1/0)</td>
   <td bgcolor='#dddddd'><input type='text' name='isAdmin' size='30'></td>
 </tr>
 </table>
-<input id='leftmargin' type='submit' name='kayttajaBtn' value='Tallenna tiedot' style='float:left'>
+<input id='leftmargin' type='submit' name='kayttajaBtn' value='Lisää käyttäjä' style='float:left'>
 <p>Tähdellä (*) merkityt kentät ovat pakollisia</p>
 </form>
 FORMSEND;

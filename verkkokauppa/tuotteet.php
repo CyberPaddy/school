@@ -6,7 +6,6 @@ $ostos		= isset($_GET['tuote'])	? $_GET['tuote']	: '';
 
 if ($ostos != '') {
   # Testataan onko GET:lla saatu tuote olemassa
-  # TODO: Tämä ei vielä ota huomioon käyttäjän omistamia pelejä
   $testaaTuote = $db->prepare("SELECT * FROM products WHERE product_name like '{$ostos}'");
   $testaaTuote->execute();
 
@@ -29,11 +28,10 @@ if (strpos($hakuehto, 'asc') !== false) $hakuehto = str_replace('asc', 'desc', $
 
 $tuoteryhma = isset($_POST['tuoteryhma']) ? $_POST['tuoteryhma'] : '';
 
-#if ($tuoteryhma == '')
-$stmt = listaaTuotteet($db, $hakuehto);
+if ($tuoteryhma == '') $stmt = listaaTuotteet($db, $hakuehto);
 
-#else
-#$stmt = listaaTuoteryhma($db, $hakuehto, $tuoteryhma);
+// Tuoteryhmäfilteröinti ei ole vielä käytössä
+# else $stmt = listaaTuoteryhma($db, $hakuehto, $tuoteryhma);
 
 sqlResult2Html($stmt);
 
@@ -93,10 +91,7 @@ $sql = <<<SQLEND
         WHERE product_name NOT IN (SELECT game_name FROM userLibrary WHERE fk_user_id like '{$got_uid['user_id']}')
    AND (product_name NOT IN ({$ostoskori_string})
    OR product_type NOT LIKE 'Peli')
-	AND 	(product_name 	LIKE '%{$hakuehto}%'
-	OR	manufacturer 	LIKE '%{$hakuehto}%'
-	OR	genre 		LIKE '%{$hakuehto}%'
-	OR	product_type 	LIKE '%{$hakuehto}%')
+   AND product_type LIKE '{$tuoteryhma}'
 	ORDER BY product_name
 SQLEND;
 	
@@ -109,14 +104,13 @@ SQLEND;
 function sqlResult2Html($stmt) {
 
 $row_count = $stmt->rowCount();
-$col_count  = $stmt->columnCount();
 
 echo "<p>Hakutulokset: " . $row_count. " tuotetta</p>\n";
 echo "<table id='tuoteTable'>\n";
 $output = <<<OUTPUTEND
 <tr bgcolor='#ffeedd'>
 <td>Tuote</td><td>Tyyppi</td><td>Valmistaja</td>
-<td>Hinta</td><td>Rating (0-5)</td><td>Genre</td><td>Päivämäärä</td><td></td>
+<td>Hinta</td><td>Rating</td><td>Genre</td><td>Päivämäärä</td><td></td>
 </tr>
 OUTPUTEND;
 echo $output;
@@ -129,15 +123,17 @@ while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 	$price = number_format((float)$row['price'], 2, ',', '');
 	$rating = round($row['rating'], 2);	
 
-	# if (!in_array(($row['product_name'].' '), $_SESSION['ostoskori'])) $linkkiText = "<a href='tuotteet.php?tuote={$row['product_name']}' id='addLink'>{$ostoskoriText}</a>";
-
     $output = <<<OUTPUTEND
     <tr>
     <td>{$row['product_name']}</td>
     <td>{$row['product_type']}</td>
     <td>{$row['manufacturer']}</td>
     <td>{$price}€</td>
-    <td>{$rating}</td>
+    <td>
+    <div class='stars-outer'><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i><i class='far fa-star'></i>
+    <div class='stars-inner'><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i><i class='fas fa-star'></i>{$rating}</div>
+    </div>
+    </td>
     <td>{$row['genre']}</td>
     <td>{$row['date']}</td>
     <td><a href='tuotteet.php?tuote={$row['product_name']}' id='addLink'>{$ostoskoriText}</a></td>
@@ -167,5 +163,7 @@ else {
 }
 
 }
-
+echo "<script>";
+require("assets/drawStars.js");
+echo "</script>";
 ?>

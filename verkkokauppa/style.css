@@ -92,3 +92,23 @@ p {
 
   transition: 100ms ease;
 }
+
+.stars-outer {
+  display: inline-block;
+  position: relative;
+  width: 100;
+}
+.stars-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0; /* Tämä muutetaan JS:llä */
+  color: #f88;
+  z-index: -1;
+}
+.stars-outer a {
+  text-decoration: none;
+  color: #111;
+}
