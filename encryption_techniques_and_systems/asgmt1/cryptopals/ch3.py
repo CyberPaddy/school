@@ -14,6 +14,5 @@ best_outcome = max(possible_outcomes, key = lambda s: s.count(' '))
 from langdetect import detect
 if detect(best_outcome) == 'en':
     print (best_outcome)
-    exit()
-
-print ("Try different tactic")
+else:
+    print ("Try different tactic")
