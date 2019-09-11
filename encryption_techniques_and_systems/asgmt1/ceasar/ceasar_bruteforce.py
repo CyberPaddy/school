@@ -1,6 +1,6 @@
 # Python 2
 from __future__ import print_function       # 'sep' argument to print function
-from ceasar_encrypt import get_cipher       # Returns ciphertext from given k and text 
+from ceasar_decrypt import decrypt_cipher   # Returns decrypted text from given k and text 
 
 # Program starts from her
 def main():
@@ -13,7 +13,7 @@ def main():
 
     # Function returns cipher text from given k and text
     for k in range(0, 26):
-        decrypted_text = get_cipher(k, cipher_text)
+        decrypted_text = decrypt_cipher(k, cipher_text)
         
         # Only print out plaintexts that contains keyword
         if keyword in decrypted_text:
