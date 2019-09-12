@@ -180,7 +180,6 @@ if len(sys.argv) > 1 and __name__ == '__main__':
                     main(block)
                     block = ''
                     block_index = 0
-            main(block)
             break
 
 elif __name__ == '__main__':
