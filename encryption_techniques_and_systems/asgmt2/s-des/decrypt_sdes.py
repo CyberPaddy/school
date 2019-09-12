@@ -8,7 +8,7 @@ def print_permutations(rules, permutation):
 
 # Prints initial values of P, K and P10
 def print_begin_values(P, K, P8, P10):
-    print ("\nPlaintext P =", P)
+    print ("\nCiphertext =", P)
     print ("Key K =", K)
     print_permutations(P8, "P8")
     print_permutations(P10,"P10")
@@ -75,7 +75,7 @@ def inverse_permutation(bits, IP_):
 
 def main(P):
     if P == '':
-        P   = '11001101'      # Plaintext
+        P   = '10010010'      # Ciphertext
     else:
         P = add_trailing_zeroes_to_binary(P, 8)
 
@@ -168,7 +168,8 @@ if len(sys.argv) > 1 and __name__ == '__main__':
                 print ("Argument " + arg + " is not binary string!\n")
                 b = False
                 break
-
+        
+        # Handle binary in one byte blocks (pass one byte of binary to main)
         while (b):
             block_index = 0
             block = ''
