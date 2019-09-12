@@ -134,7 +134,7 @@ def main(P):
 
     P4 =    [2, 4, 3, 1]
     
-    fk_bits = fk_function(EP_bits1, K2, S0, S1, IP1, EP, P4, 2)
+    fk_bits = fk_function(EP_bits1, K2, S0, S1, IP1, EP, P4, 1)
     
     ######### SW function ##########
     
@@ -180,6 +180,7 @@ if len(sys.argv) > 1 and __name__ == '__main__':
                     main(block)
                     block = ''
                     block_index = 0
+            main(block)
             break
 
 elif __name__ == '__main__':
