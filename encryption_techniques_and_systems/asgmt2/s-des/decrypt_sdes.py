@@ -8,7 +8,7 @@ def print_permutations(rules, permutation):
 
 # Prints initial values of P, K and P10
 def print_begin_values(P, K, P8, P10):
-    print ("\nCiphertext =", P)
+    print ("\nPlaintext P =", P)
     print ("Key K =", K)
     print_permutations(P8, "P8")
     print_permutations(P10,"P10")
@@ -63,7 +63,7 @@ def fk_function(e1, e2, S0, S1, IP1, EP, P4, round_no):
     print ("Do P4 permutation to previous bits\nResult: " + fk_bits + "\n")
     
     IP1_fk_xor = add_trailing_zeroes_to_binary(xor(IP1[0:4], fk_bits), 4)
-    xor_element = "IP" if round_no == 1 else "SW function"
+    xor_element = "IP" if round_no == 2 else "SW function"
     print ("Perform XOR between the first 4 bits obtained in the " + xor_element + " (" + IP1[0:4] + ") and these P4 bits (" + fk_bits + "):\nResult: " + IP1_fk_xor + "\n")
 
     fk_bits = IP1_fk_xor + IP1[4:]  
@@ -75,7 +75,7 @@ def inverse_permutation(bits, IP_):
 
 def main(P):
     if P == '':
-        P   = '10010010'      # Ciphertext
+        P   = '10010010'      # Plaintext
     else:
         P = add_trailing_zeroes_to_binary(P, 8)
 
@@ -134,7 +134,7 @@ def main(P):
 
     P4 =    [2, 4, 3, 1]
     
-    fk_bits = fk_function(EP_bits1, K2, S0, S1, IP1, EP, P4, 1)
+    fk_bits = fk_function(EP_bits1, K2, S0, S1, IP1, EP, P4, 2)
     
     ######### SW function ##########
     
@@ -153,7 +153,7 @@ def main(P):
 
     print ("### INVERSE PERMUTATION ###")
     plaintext = inverse_permutation(fk_bits, IP_)
-    print ("To obtain plaintext, apply IP^-1 = (4 1 3 5 7 2 8 6)\nPlaintext for ciphertext " + P + ": " + plaintext + "\n")
+    print ("To obtain plaintext, apply IP^-1 = (4 1 3 5 7 2 8 6)\nPlaintext for string " + P + ": " + plaintext + "\n")
 
 import sys
 
@@ -168,8 +168,7 @@ if len(sys.argv) > 1 and __name__ == '__main__':
                 print ("Argument " + arg + " is not binary string!\n")
                 b = False
                 break
-        
-        # Handle binary in one byte blocks (pass one byte of binary to main)
+
         while (b):
             block_index = 0
             block = ''
