@@ -1,0 +1,91 @@
+Plaintext P = 10100010
+Key K = 0111111101
+Permutation P8: (k6, k3, k7, k4, k8, k5, k10, k9, k2, k1)
+Permutation P10: (k3, k5, k2, k7, k4, k10, k1, k9, k8, k6)
+
+Key after permutation P10: 1111110011
+
+Split the key to two groups of 5 bits:
+left bits = 11111
+right bits = 10011
+
+Perform a circular left shift (LS-1) for groups of 5 bits:
+left bits = 11111
+right bits = 00111
+
+K1 = 01011111 (P8 permutation to 11111 00111)
+
+Perform a circular left shift two times (LS-2) for groups of 5 bits:
+left bits = 11111
+right bits = 11100
+
+K2 = 11111100 (P8 permutation to 11111 11100)
+
+### INITIAL PERMUTATION ###
+IP = 00110001 (Permutation (2, 6, 3, 1, 4, 8, 5, 7) to ciphertext)
+
+### FIRST ROUND FUNCTION ###
+
+Apply expansion permutation EP to last 4 bits of IP (0001)
+10000010
+
+Compute XOR with K2
+Result: 10000010 ^ 11111100 = 01111110
+
+    S0 = [  [1, 0, 3, 2],   # 0
+            [3, 2, 1, 0],   # 1
+            [0, 2, 1, 3],   # 2
+            [3, 1, 3, 2]]   # 3
+
+    S1 = [  [0, 1, 2, 3],   # 0
+            [2, 0, 1, 3],   # 1
+            [3, 0, 1, 0],   # 2
+            [2, 1, 0, 3]]   # 3
+
+Compute first four bits (0111) with S0 and last four bits (1110) with S1
+
+S0 row 01 (1) , col 11 (3) --> 00
+S1 row 10 (2) , col 11 (3) --> 00
+
+Result: 0000
+
+Do P4 permutation to previous bits
+
+P4 = (2, 4, 3, 1)
+Result: 0000
+
+Perform XOR between the first 4 bits obtained in the IP (0011) and these P4 bits (0000)
+Result: 0011
+
+Add last four bits of IP (0001)
+Result: 00110001
+
+### SWITCH FUNCTION ###
+Switch the two 4 bits sequences (0011 and 0001):
+00010011
+
+### SECOND ROUND FUNCTION ###
+Apply E/P to the last 4 bits (0011):
+10010110
+
+Compute XOR with K1
+01011111 ^ 10010110 = 11001001
+
+Compute first four bits (1100) with S0 and last four bits (1001) with S1
+Result: 0110
+
+Do P4 permutation to previous bits
+Result: 1010
+
+Perform XOR between the first 4 bits obtained in the SW function (0001) and these P4 bits
+Result: 1011
+
+Add last four bits of SW function (0011)
+Result: 10110011
+
+### INVERSE PERMUTATION ###
+To obtain plaintext, apply IP^-1 = (4 1 3 5 7 2 8 6)
+Plaintext bits for string 10100010: 11101010 
+
+Plaintext string = 1110 = O, 1010 = K --> OK
+
