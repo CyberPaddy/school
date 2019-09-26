@@ -1,11 +1,29 @@
+# Function to handle ConnectionRefusedError
+def cre():
+    print ("Server is not active or wrong IP or port.")
+    exit(0)
+
 # Requested function from Assignment 1:
 # The function should send all of the data to the socket
 # remember, send() might not send everything!
 def send_data_to_socket(sock, data):
-    try:
-        sock.sendall(data) # Send all data to server
-    except Exception as e:
-        print (e)
+    
+    # send() might not send everything
+    # but it returns the amount of bytes it sent
+    bytes_sent = 0
+    while bytes_sent < len(data):
+    
+        try:
+            bytes_sent += sock.send( bytes(data, 'utf-8') ) # Send data to socket
+
+        # CRE is raised if server is not active / wrong IP or port
+        except ConnectionRefusedError:
+            cre()
+
+        except Exception as e:
+            print (e)
+
+        print(bytes_sent)
 
 def main():
     # Create socket object to variable 's'
@@ -18,10 +36,22 @@ def main():
     SERVER_IP   = '127.0.0.1'   # Localhost
     SERVER_PORT = 13337         # Server's port
     
-    s.connect((SERVER_IP, SERVER_PORT)) # Connect to server
-    print ("Connected to", SERVER_IP, "port", SERVER_PORT)
+    try:
+        s.connect((SERVER_IP, SERVER_PORT)) # Connect to server
 
-    send_data_to_socket(s, b'Terrwe kawerrri')
+    # Quit the program if server is not active or wrong IP/port is given
+    except ConnectionRefusedError as cre:
+        cre()
+
+    except Exception as e:
+        print (e)
+        exit(0)
+
+    else:
+        print ("Connected to", SERVER_IP, "port", SERVER_PORT)
+    
+    # Args: Socket, Message
+    send_data_to_socket(s, 'Terrwe kawerrri')
     
     # Close the connection
     s.close()
