@@ -14,7 +14,8 @@ def send_data_to_socket(sock, data):
     while bytes_sent < len(data):
     
         try:
-            bytes_sent += sock.send( bytes(data, 'utf-8') ) # Send data to socket
+            # Send data starting from the last byte that was not sent last iteration
+            bytes_sent += sock.send( bytes(data[bytes_sent:], 'utf-8') )
 
         # CRE is raised if server is not active / wrong IP or port
         except ConnectionRefusedError:
