@@ -14,7 +14,9 @@ def cre():
 # remember, send() might not send everything!
 def send_data_to_socket(sock, data):
     
-    print ("Sending message '" + data + "' to", sock.getsockname()[0])
+    # getpeername() method returns remote peers IP-address and port in a tuple
+    # The 0th element is the IP-address
+    print ("Sending message '" + data + "' to", sock.getpeername()[0])
 
     # send() might not send everything
     # but it returns the amount of bytes it sent.
