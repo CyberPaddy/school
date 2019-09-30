@@ -6,7 +6,7 @@ def main():
     sock.bind(("localhost", 8888))
     sock.listen(5)
     (client, addr) = sock.accept()
-    print("Received a connectioni from ", addr)
+    print("Received a connection from ", addr)
     # End of copy
    
     from my_utils import recv_from_socket, msg_to_socket
@@ -14,8 +14,9 @@ def main():
     # and returns the received message
     received_message = recv_from_socket(client)
 
-    print(received_message)
+    print("Received data from client:", received_message)
     
+    # Echo message back to client
     # msg_to_socket returns message to be sent in bytes
     # including 2 byte header which implies message length
     client.send(msg_to_socket(received_message))

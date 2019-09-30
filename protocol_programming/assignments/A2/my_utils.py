@@ -1,3 +1,27 @@
+# Handle ConnectionRefusedError
+def connection_refused_error():
+    print ("Connection to server failed!\nServer is not active / Wrong IP-address or port.")
+    exit(1)
+
+# Handle ConnectionResetError
+def connection_reset_error(error_message):
+    print ("\nPeer closed the connection\nError message:", error_message)
+    exit(1)
+
+def unicode_decode_error(error_message):
+    print ("\nIllegal characher for UTF-8!\nError message:", error_message)
+    exit(1)
+
+def connection_aborted_error():
+    print ("An established connection was aborted by the software in your host machine")
+    exit(1)
+
+# Handle all other exceptions than
+# ConnectionRefusedError or ConnectionResetError
+def general_exception(error_message):
+    print ("\nException happened! Error message:", error_message)
+    exit(1)
+
 # First two bytes implies how long will the message be
 # so the max length of one message is 2^16 = 65536 bytes
 def hex_to_two_bytes(hex_str):
@@ -5,6 +29,7 @@ def hex_to_two_bytes(hex_str):
     hex_str = hex_str[2:] # Take '0x' off from the beginning of hex
 
     # 2 bytes equals four hexadecimal numbers
+    # If hex_str is f.ex '3b' append two zeroes in front
     for i in range (0, 4-len(hex_str)):
         hex_str = "0" + hex_str
     
@@ -18,12 +43,43 @@ def msg_to_socket(message):
 # Returns the message string without header
 def recv_from_socket(sock):
     # Message format: msg_len (2 bytes) + message
-    msg_len = int.from_bytes(sock.recv(2), byteorder = 'big')
+    try:
+        msg_len = int.from_bytes(sock.recv(2), byteorder = 'big')
+
+    except ConnectionRefusedError:
+        connection_refused_error()
+
+    except ConnectionResetError as e:
+        connection_reset_error(e)
+
+    except ConnectionAbortedError:
+        connection_aborted_error()
+    
+    except Exception as e:
+        general_exception(e)
+
+    
     
     received_message = ''
     
     # Receive until received_message matches the length of message implied in the header
     while len(received_message) < msg_len:
-        received_message += received_message + str(sock.recv(1024), 'utf-8')
+        try:
+            received_message += received_message + str(sock.recv(1024), 'utf-8')
+
+        except ConnectionRefusedError:
+            connection_refused_error()
+
+        except ConnectionResetError as e:
+            connection_reset_error(e)
+        
+        except UnicodeDecodeError as e:
+            unicode_decode_error(e)
+
+        except ConnectionAbortedError:
+            connection_aborted_error()
+
+        except Exception as e:
+            general_exception(e)
 
     return received_message
