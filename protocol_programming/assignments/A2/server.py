@@ -19,7 +19,11 @@ def main():
     # Echo message back to client
     # msg_to_socket returns message to be sent in bytes
     # including 2 byte header which implies message length
+    print ("Sending message back to the client")
     client.send(msg_to_socket(received_message))
+
+    print ("\nClosing the server...")
+    sock.close()
 
 if __name__ == "__main__":
     main()

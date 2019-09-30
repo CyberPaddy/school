@@ -16,10 +16,11 @@ message = "hello world"
 
 # msg_to_socket returns message to be sent in bytes
 # including 2 byte header which implies message length
+print ("Sending message to server:", message)
 s.send(msg_to_socket(message))
 
 # recv_from_socket handles receiving all data from client
 # and returns the received message 
-print(recv_from_socket(s))
+print("Received data from server:", recv_from_socket(s))
     
 s.close() # Close the connection
