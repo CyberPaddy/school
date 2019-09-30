@@ -39,8 +39,11 @@ import sys
 if __name__ == "__main__" and len(sys.argv) == 3:
     try:
         PORT = int(sys.argv[2])
+        # Do not use well-known ports 0-1023
+        if PORT < 1024 or PORT > 65535:
+            raise ValueError
     except ValueError:
-        print ("Please give integer value as <PORT>\nSyntax: server.py <HOST> <PORT>")
+        print ("Please give integer value between 1024-65535 as <PORT>\nSyntax: server.py <HOST> <PORT>")
         exit(1)
 
     main(sys.argv[1], PORT) # Args: HOST, PORT
