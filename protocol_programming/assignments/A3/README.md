@@ -25,10 +25,3 @@ Keep the server running after a single connection has been handled.</p>
 
 <p>If these two values are not given from the command line the client should print an error message and exit immediately<br />
 Handle the exceptions from <i>connect()</i> and <i>send()</i> and print a human readable error message if an error occurs</p>
-
-<p><b>Hints:</b></p>
-
-<ol>
-<li><i>argv</i> from <i>sys</i> module contains the command line parameters passed to the application. It is a list so <i>len()</i> works for it as well.</li>
-<li>How to make server wait for other connections? while x until a server admin presses a key?</li>
-</ol>
