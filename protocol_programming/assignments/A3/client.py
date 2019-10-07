@@ -13,7 +13,7 @@ def main(HOST, PORT):
     except Exception as e:
         general_exception(e) # Handle all other exceptions
     
-    message = "hello world"
+    message = "hello world" * 100000
     
     # get_header_and_message_as_bytes returns message to be sent in bytes
     # including 2 byte header which implies message length

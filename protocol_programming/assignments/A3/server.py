@@ -20,7 +20,7 @@ def main(HOST, PORT):
        
         # recv_from_socket handles receiving all data from client
         # and returns the received message
-        from my_utils import recv_from_socket, get_header_and_message_as_bytes
+        from my_utils import recv_from_socket, send_message_to_socket
         received_message = recv_from_socket(client)
 
         print("Received data from client:", received_message)
@@ -29,7 +29,7 @@ def main(HOST, PORT):
         # get_header_and_message_as_bytes returns message to be sent in bytes
         # including 2 byte header which implies message length
         print ("Sending message back to the client")
-        client.send(get_header_and_message_as_bytes(received_message))
+        send_message_to_socket(client, received_message)
 
     print ("\nClosing the server...")
     sock.close()

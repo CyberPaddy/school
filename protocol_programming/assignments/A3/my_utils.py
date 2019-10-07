@@ -51,7 +51,7 @@ def send_message_to_socket(sock, message):
     sent_bytes = 0
     while sent_bytes < len(message):
         try:
-            sent_bytes += sock.send(get_header_and_message_as_bytes(message))
+            sent_bytes += sock.send(get_header_and_message_as_bytes(message[:65535]))
         except socket.timeout:
             socket_timeout_error()
     
