@@ -1,32 +1,49 @@
 import socket
 
-def main(HOST, PORT):
-    # Start of copy from assignment page
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
+# Creates new file to 'received-files' -folder
+def create_new_file(name, contents):
+    folder = 'received-files/'
     try:
-        sock.bind((HOST, PORT))
-    except OSError:
-        print ("Port", PORT, "is already occupied by another process. Please use different port!")
+        new_file = open( (folder + name), 'wb')
+    except FileNotFoundError:
+        print("Folder '" + folder + "' doesn't exist\nServer is shutting down...")
+        exit(1)
+    except PermissionError:
+        print("Current user does not have write permission to folder '" + folder + "'\nServer is shutting down...")
+        exit(1)
+    except IOError:
+        print("File", name, "could not be created to '" + folder + "' -folder\nServer is shutting down...")
         exit(1)
     
+    new_file.write(contents)
+    new_file.close()
+    print ("Successfully created new file", name, "to received_files -folder!")
 
-    sock.listen(5)
+def main(HOST, PORT):
+    s= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    try:
+        s.bind((HOST, PORT))
+    except OSError:
+        print ("Port", PORT, "is already occupied by another process. Please use different port!")
+        exit(1) 
+
+    s.listen(5)
 
     while True:
-        (client, addr) = sock.accept()
+        (client, addr) = s.accept()
         print("Received a connection from ", addr)
-        # End of copy
        
         # recv_from_socket handles receiving all data from client
-        # and returns the received message
+        # and returns the name of the file and its contents
         from my_utils import recv_from_socket
-        received_message = recv_from_socket(client)
+        file_name, received_file = recv_from_socket(client)
 
-        print("Received data from client:", received_message)
+        print ("\nName of the received file:", file_name)
+        create_new_file(file_name, received_file) # Creates new file to 'received-files' -folder
         
     print ("\nClosing the server...")
-    sock.close()
+    s.close()
 
 import sys
 # Program needs to have two command line arguments (host and port)

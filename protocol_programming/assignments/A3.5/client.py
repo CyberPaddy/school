@@ -1,4 +1,4 @@
-from my_utils import get_header_and_message_as_bytes, connection_refused_error, general_exception, send_file_to_socket
+from my_utils import connection_refused_error, general_exception, send_file_to_socket
 import socket, os
 
 def main(PATH, HOST, PORT):
@@ -6,17 +6,19 @@ def main(PATH, HOST, PORT):
 
     try:
         s.connect((HOST, PORT))
-    
     except ConnectionRefusedError:
-        connection_refused_error() # Prints error message and exit program (connection to server failed)
-    
+        connection_refused_error() # Prints error message and exit program (connection to server failed) 
     except Exception as e:
         general_exception(e) # Handle all other exceptions
     
     try:
         FILE = open(PATH, 'rb') # Open file as binary
+        FILE_NAME = os.path.split(PATH)[-1]
     except FileNotFoundError:
-        print ("File", f, "does not exist. Please check file path!")
+        print ("File", FILE_NAME, "does not exist. Please check file path!")
+        exit(1)
+    except IOError:
+        print("Cannot open the file", FILE_NAME)
         exit(1)
 
     # Get file size
@@ -24,10 +26,10 @@ def main(PATH, HOST, PORT):
 
     # get_header_and_message_as_bytes returns message to be sent in bytes
     # including 2 byte header which implies message length
-    print ("Sending file to server:", os.path.split(PATH)[-1] + "\nFile size:", FILE_SIZE, "bytes")
+    print ("Sending file to server:", FILE_NAME + "\nFile size:", FILE_SIZE, "bytes")
 
     # Parse message to correct form and make sure everything will be sent
-    send_file_to_socket(s, FILE, FILE_SIZE)
+    send_file_to_socket(s, FILE_NAME, FILE, FILE_SIZE)
         
     s.close() # Close the connection
 
