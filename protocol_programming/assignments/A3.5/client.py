@@ -11,17 +11,19 @@ def main(PATH, HOST, PORT):
     except Exception as e:
         general_exception(e) # Handle all other exceptions
     
+    from my_utils import format_folder
+    PATH = format_folder(PATH)
     try:
         FILE = open(PATH, 'rb') # Open file as binary
-        FILE_NAME = os.path.split(PATH)[-1]
     except FileNotFoundError:
-        print ("File", FILE_NAME, "does not exist. Please check file path!")
+        print ("File", PATH, "does not exist. Please check file path!")
         exit(1)
     except IOError:
-        print("Cannot open the file", FILE_NAME)
+        print("Cannot open the file", PATH)
         exit(1)
 
-    # Get file size
+    # Get file name and size
+    FILE_NAME = os.path.split(PATH)[-1]
     FILE_SIZE = os.path.getsize(PATH)
 
     # get_header_and_message_as_bytes returns message to be sent in bytes
