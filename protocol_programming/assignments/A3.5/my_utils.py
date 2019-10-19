@@ -27,6 +27,13 @@ def general_exception(error_message):
     print ("\nException happened! Error message:", error_message)
     exit(1)
 
+# Make sure folder given contains only forward slashes and does not end with a slash
+def format_folder(folder):
+    folder.replace('\\', '/')
+    if folder[-1] == '/':
+        return folder[:-1]
+    return folder
+
 # Returns byte representation of hex number
 # with zeroes as padding to match byte_amount
 def hex_to_bytes(hex_str, byte_amount):
@@ -88,12 +95,15 @@ def recv_from_socket(sock):
         general_exception(e)    
 
     received_file = b''
-    
+    recv_count    = 0
     # Receive until received_file matches the length of message implied in the header
     while len(received_file) < file_len:
+        recv_count += 1
+        if recv_count % 400 == 0:  # Print file recv percentage every now and then
+            print ("Received", "{0:.2f}".format(len(received_file) / file_len * 100) + "% of the file")
+
         try:
             received_file = received_file + sock.recv(1024)
-
         except ConnectionRefusedError:
             connection_refused_error()
         except ConnectionResetError as e:
