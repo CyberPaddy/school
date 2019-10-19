@@ -61,10 +61,10 @@ if __name__ == "__main__" and len(sys.argv) == 4:
         if PORT < 1024 or PORT > 65535:
             raise ValueError
     except ValueError:
-        print ("Please give integer value between 1024-65535 as <PORT>\nSyntax: server.py <HOST> <PORT>")
+        print ("Please give integer value between 1024-65535 as <PORT>\nSyntax: server.py <DIRECTORY> <HOST> <PORT>")
         exit(1)
 
     main(sys.argv[1], sys.argv[2], PORT) # Args: RECV_DIR HOST, PORT
 
 elif __name__ == "__main__":
-    print("Please give two command line arguments!\nSyntax: server.py <HOST> <PORT>")
+    print("Please give two command line arguments!\nSyntax: server.py <DIRECTORY> <HOST> <PORT>")
