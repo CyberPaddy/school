@@ -11,91 +11,144 @@ SECURITY RELATED THINKING
 
 1. INTRODUCTION
 
-  This simple file transfer protocol design is a stateful
+  This file transfer protocol design is a stateless command based protocol
+  to share certain files from file server to clients.
 
 2. TERMINOLOGY
 
 2.1. DOCUMENT
 
+  CLIENT
+    Machine that connects to SERVER.
+
+  FUNCTION
+    One REQUEST or RESPONSE. Starts with <COMMAND> and ends with CRLF.
+
   MUST
-    asd
+    Keyword which implies that something is mandatory and is forced to be implement
 
   MUST NOT
-    asd
-
-  REQUEST
-    asd
-  
-  RESPONSE
-    asd
+    Keyword which implies that something is not allowed to do something
 
   PARAMETER
-    asd
+    <COMMAND> spesific keywords and optional MSG keyword.
 
-2.2. SYNTAX
+  PORT
+    TCP port.
 
-  <DATA>
-    Asd
+  REQUEST
+    FUNCTION that asks for certain action.
+  
+  RESPONSE
+    FUNCTION that answers for REQUEST.
 
-  <DATA_SIZE>
-    asd
+  SERVER
+    Machine that is actively listening for connections on certain PORT.
 
-  <FUNCTION>
+  SOCKET
+    Two-way connection between two peers on one machine's certain PORT.
+    Both peers MUST be able to send and receive data to each other.
+
+  SYNTAX
+    The order of operations for FUNCTION.
+
+2.2. SYNTAX SPECIFIC TERMINOLOGY
+
+  CRLF
+    Carriage return (ASCII 13) + Line feed (ASCII 10)
+
+  SP
+    Space (ASCII 32)
+  
+  <COMMAND>
     The command in REQUEST or RESPONSE. All commands are listed at 4.1. and 4.2.
 
-  <FUNC_PARAM>
-    FUNCTION's first PARAMETER that tells what the FUNCTION MUST do.
+  <DATA>
+    Filename(s) for LIST <FUNCTION>, file content for FILE <FUNCTION>
 
-  <MESSAGE>
-    PARAMETER for FUNCTION which 
+  <DATA_SIZE>
+    The amount of bytes in <DATA>.
 
-  <MESSAGE_SIZE>
-    The size of upcoming <MESSAGE> in 
+  <COMMAND_PARAM>
+    <COMMAND> related PARAMETER, for example the filename for DOWNLOAD.
 
+  [] (SQUARE BRACKETS)
+    Optional parts of the SYNTAX. Everything inside [] MUST be in the FUNCTION if some of it is.
     
-
 3. ESTABLISHING CONNECTIONS
 
-  TCP, server has to already listen to certain port.
+  Connection MUST be formed via TCP SOCKET. server has to already listen to certain port.
 
 4. DATA TRANSFER FUNCTIONS
 
-  D
-  SYNTAX: <FUNCTION>;<FUNC_PARAM>;[MSG;<MESSAGE_SIZE>;<MESSAGE>;][<DATA_SIZE>;<DATA>];;
+  SYNTAX
+    <COMMAND>[SP<COMMAND_PARAM>[;<DATA_SIZE>;<DATA>]];CRLF
 
-4.1. REQUESTS
+4.1. REQUEST <COMMAND>
 
-  LIST: Lists filenames of the files available on the server.
+  LIST
+    List filenames of the files available on the server.
 
-  DOWNLOAD: Downloads a file. A filename has to be provided.
+  DOWNLOAD
+    Downloads a file. A filename has to be provided.
 
-4.2. RESPONSES
+4.2. RESPONSE <COMMAND>
 
-  ERROR: Tells the client that the request could not be processed.
-  Different error messages are listed at 5.1.
+  ERROR
+    Tells the client that the request could not be processed.
+    Different error messages are listed at 5.1.
 
-  FILE: Returns the data to the client.
+  FILE
+    Returns the data to the client.
+
+  LS
+    Returns list of filenames separated by SP
 
 4.3. EXAMPLES
 
 4.3.1. SUCCESSFUL FILE DOWNLOAD
 
-    REQUEST:  DOWNLOAD file.txt
-    RESPONSE: FILE file.txt <DATA>
+  REQUEST
+    DOWNLOAD file.txt;
 
+  RESPONSE
+    FILE file.txt;<DATA_SIZE>;<DATA>;CRLF
+
+4.3.2. LIST ALL FILES ON THE SERVER
+  
+  REQUEST
+    LIST;
+
+  RESPONSE
+    LS test.txt cat.png bull.zip
+
+4.3.3. FILE NOT FOUND
+
+  REQUEST
+    DOWNLOAD pork.zip;
+
+  RESPONSE
+    ERROR 404;
 
 5. PROTOCOL STATES
 
-  
+5.1. SERVER
 
 6. ERROR CONDITIONS
 
-  Error MUST be raised if requested function cannot be finished.
+  Error MUST be raised if requested FUNCTION cannot be finished
+  or requested data is not found or available for the requester.
   
 6.1. ERROR MESSAGES
 
-  403 Unauthorized.
-  404 File not found.
-  500 Command unrecognized
-  501 Syntax error in arguments or parameters
-  502 Command not available in current state
+  ERROR 403
+    Unauthorized.
+
+  ERROR 404
+    File not found.
+
+  ERROR 500
+    <COMMAND> unrecognized.
+
+  ERROR 501
+    SYNTAX error.
