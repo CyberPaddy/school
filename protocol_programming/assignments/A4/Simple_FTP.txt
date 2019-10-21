@@ -11,40 +11,89 @@ SECURITY RELATED THINKING
 
 1. INTRODUCTION
 
-  This simple file transfer protocol design is a stateful 
+  This simple file transfer protocol design is a stateful
 
-2. ESTABLISHING CONNECTIONS
+2. TERMINOLOGY
 
+2.1. DOCUMENT
 
+  MUST
+    asd
 
-3. DATA TRANSFER FUNCTIONS
+  MUST NOT
+    asd
 
+  REQUEST
+    asd
+  
+  RESPONSE
+    asd
 
+  PARAMETER
+    asd
 
-3.1. REQUESTS
+2.2. SYNTAX
 
-  LIST: lists the filenames of the files available on the server.
+  <DATA>
+    Asd
 
-  DOWNLOAD: downloads a file. A filename has to be provided.
+  <DATA_SIZE>
+    asd
 
-3.2. RESPONSES
+  <FUNCTION>
+    The command in REQUEST or RESPONSE. All commands are listed at 4.1. and 4.2.
 
-  ERROR: tells the client that the request could not be processed.
+  <FUNC_PARAM>
+    FUNCTION's first PARAMETER that tells what the FUNCTION MUST do.
+
+  <MESSAGE>
+    PARAMETER for FUNCTION which 
+
+  <MESSAGE_SIZE>
+    The size of upcoming <MESSAGE> in 
+
+    
+
+3. ESTABLISHING CONNECTIONS
+
+  TCP, server has to already listen to certain port.
+
+4. DATA TRANSFER FUNCTIONS
+
+  D
+  SYNTAX: <FUNCTION>;<FUNC_PARAM>;[MSG;<MESSAGE_SIZE>;<MESSAGE>;][<DATA_SIZE>;<DATA>];;
+
+4.1. REQUESTS
+
+  LIST: Lists filenames of the files available on the server.
+
+  DOWNLOAD: Downloads a file. A filename has to be provided.
+
+4.2. RESPONSES
+
+  ERROR: Tells the client that the request could not be processed.
   Different error messages are listed at 5.1.
 
-  FILE: returns the data to the client.
+  FILE: Returns the data to the client.
 
-4. PROTOCOL STATES
+4.3. EXAMPLES
+
+4.3.1. SUCCESSFUL FILE DOWNLOAD
+
+    REQUEST:  DOWNLOAD file.txt
+    RESPONSE: FILE file.txt <DATA>
+
+
+5. PROTOCOL STATES
 
   
 
-5. ERROR CONDITIONS
+6. ERROR CONDITIONS
 
   Error MUST be raised if requested function cannot be finished.
   
-5.1. ERROR MESSAGES
+6.1. ERROR MESSAGES
 
-  200 Command OK.
   403 Unauthorized.
   404 File not found.
   500 Command unrecognized
