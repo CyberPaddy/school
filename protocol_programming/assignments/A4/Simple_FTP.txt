@@ -1,0 +1,52 @@
+SIMPLE FTP DESIGN BY TEEMU PÄTSI
+
+*******************************
+STATEFUL / STATELESS
+HOW ARE MESSAGES FORMATTED
+  - HEADER
+  - PAYLOAD
+WHAT DIFFERENT KIND OF MESSAGES
+SECURITY RELATED THINKING
+*******************************
+
+1. INTRODUCTION
+
+  This simple file transfer protocol design is a stateful 
+
+2. ESTABLISHING CONNECTIONS
+
+
+
+3. DATA TRANSFER FUNCTIONS
+
+
+
+3.1. REQUESTS
+
+  LIST: lists the filenames of the files available on the server.
+
+  DOWNLOAD: downloads a file. A filename has to be provided.
+
+3.2. RESPONSES
+
+  ERROR: tells the client that the request could not be processed.
+  Different error messages are listed at 5.1.
+
+  FILE: returns the data to the client.
+
+4. PROTOCOL STATES
+
+  
+
+5. ERROR CONDITIONS
+
+  Error MUST be raised if requested function cannot be finished.
+  
+5.1. ERROR MESSAGES
+
+  200 Command OK.
+  403 Unauthorized.
+  404 File not found.
+  500 Command unrecognized
+  501 Syntax error in arguments or parameters
+  502 Command not available in current state
