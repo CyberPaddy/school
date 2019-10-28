@@ -18,8 +18,16 @@ SECURITY RELATED THINKING
 
 2.1. DOCUMENT
 
+  BIG-ENDIAN
+    Bytes SHOULD be ordered so that the most significant bytes are sent first.
+
   CLIENT
     Machine that connects to SERVER.
+
+  DOCUMENT ROOT
+    The directory that is used to store files which can be downloaded by CLIENTs. Downloading from it's parent folders
+    MUST NOT be permitted. CLIENTs SHOUD be able to download from the child folders of the DOCUMENT ROOT by inserting
+    the relative file path from DOCUMENT ROOT to the wanted resource. The folders SHOULD be separated with forward slashes.
 
   FUNCTION
     One REQUEST or RESPONSE. Starts with <COMMAND> and ends with CRLF.
@@ -45,6 +53,9 @@ SECURITY RELATED THINKING
   SERVER
     Machine that is actively listening for connections on certain PORT.
 
+  SHOULD
+    Recommended but not mandatory
+
   SOCKET
     Two-way connection between two peers on one machine's certain PORT.
     Both peers MUST be able to send and receive data to each other.
@@ -58,7 +69,7 @@ SECURITY RELATED THINKING
     Carriage return (ASCII 13) + Line feed (ASCII 10)
 
   SP
-    Space (ASCII 32)
+    Space (ASCII 32). Filename MUST NOT contain SP.
   
   <COMMAND>
     The command in REQUEST or RESPONSE. All commands are listed at 4.1. and 4.2.
@@ -74,12 +85,21 @@ SECURITY RELATED THINKING
 
   [] (SQUARE BRACKETS)
     Optional parts of the SYNTAX. Everything inside [] MUST be in the FUNCTION if some of it is.
+
+  ; (SEMICOLON)
+    Separator character for <COMMAND_PARAM>, <DATA_SIZE>, <DATA> and CRLF. Filename MUST NOT contain SEMICOLON.
     
 3. ESTABLISHING CONNECTIONS
 
-  Connection MUST be formed via TCP SOCKET. server has to already listen to certain port.
+  Connection MUST be formed via TCP SOCKET. Server has to already listen to certain port for which the clients connects to.
+  SOCKET MUST be terminated after server has sent the RESPONSE. Server SHOULD continue listening to the same port after RESPONSE.
+
+  Server SHOULD log or print error message when connection is terminated prematurely.
+  Server SHOULD NOT print any error message if the REQUEST sent by client was answered with proper RESPONSE.
 
 4. DATA TRANSFER FUNCTIONS
+
+  Data transfer FUNCTIONs MUST be in text form encoded with UTF-8.
 
   SYNTAX
     <COMMAND>[SP<COMMAND_PARAM>[;<DATA_SIZE>;<DATA>]];CRLF
@@ -90,9 +110,17 @@ SECURITY RELATED THINKING
     List filenames of the files available on the server.
 
   DOWNLOAD
-    Downloads a file. A filename has to be provided.
+    Downloads one file. A filename has to be provided.
+
+  QUIT
+    Terminates SOCKET if file transfer is not in progress. If transfer is in progress, the connection should remain established
+    until file transfer is completed.
 
 4.2. RESPONSE <COMMAND>
+
+  ACK
+    Sign of acknowledge. When QUIT command is used, SERVER MUST respond "ACK 200;CRLF" and close the connection.
+    SERVER SHOULD respond "ACK 102;CRLF" if file transfer is in progress when QUIT command is received
 
   ERROR
     Tells the client that the request could not be processed.
@@ -109,7 +137,7 @@ SECURITY RELATED THINKING
 4.3.1. SUCCESSFUL FILE DOWNLOAD
 
   REQUEST
-    DOWNLOAD file.txt;
+    DOWNLOAD file.txt;CRLF
 
   RESPONSE
     FILE file.txt;<DATA_SIZE>;<DATA>;CRLF
@@ -117,29 +145,25 @@ SECURITY RELATED THINKING
 4.3.2. LIST ALL FILES ON THE SERVER
   
   REQUEST
-    LIST;
+    LIST;CRLF
 
   RESPONSE
-    LS test.txt cat.png bull.zip
+    LS test.txt cat.png bull.zip;CRLF
 
 4.3.3. FILE NOT FOUND
 
   REQUEST
-    DOWNLOAD pork.zip;
+    DOWNLOAD pork.zip;CRLF
 
   RESPONSE
-    ERROR 404;
+    ERROR 404;CRLF
 
-5. PROTOCOL STATES
-
-5.1. SERVER
-
-6. ERROR CONDITIONS
+5. ERROR CONDITIONS
 
   Error MUST be raised if requested FUNCTION cannot be finished
   or requested data is not found or available for the requester.
   
-6.1. ERROR MESSAGES
+5.1. ERROR MESSAGES
 
   ERROR 403
     Unauthorized.
@@ -152,3 +176,30 @@ SECURITY RELATED THINKING
 
   ERROR 501
     SYNTAX error.
+
+5.2. CONNECTION TERMINATES UNEXPECTED
+
+  Error message SHOULD be logged or printed if SOCKET terminates unexpected.
+
+5.2.1. CONNECTION TERMINATED BY CLIENT
+
+  When SOCKET is terminated by client without the use of 
+
+5.2.2. CONNECTION TERMINATED BY SERVER
+
+6. DATA TRANSFER SPECIFICATIONS
+
+6.1. DATA TYPES
+
+  All FUNCTIONs MUST be sent encoded as UTF-8 strings. The exception is FILE command, which MUST return <DATA> in bytes.
+  <DATA_SIZE> should be sent as four byte value. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
+
+6.2. BYTE ORDER
+
+  All data sent via SOCKET MUST use BIG-ENDIAN byte order.
+
+7. SECURITY
+
+  This protocol SHOULD NOT be used to transfer confidential data. The file contents are sent unencrypted through SOCKET.
+  The SERVER SHOULD specify file path which acts as the DOCUMENT ROOT. CLIENT MUST NOT be able to request data from the
+  SERVER's DOCUMENT ROOT's parent folders.
