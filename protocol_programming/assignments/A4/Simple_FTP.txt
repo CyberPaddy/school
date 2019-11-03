@@ -1,14 +1,5 @@
 SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
-*******************************
-STATEFUL / STATELESS
-HOW ARE MESSAGES FORMATTED
-  - HEADER
-  - PAYLOAD
-WHAT DIFFERENT KIND OF MESSAGES
-SECURITY RELATED THINKING
-*******************************
-
 1. INTRODUCTION
 
   This file transfer protocol design is a stateless command based protocol to share certain files from file SERVER to CLIENTs.
