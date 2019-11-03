@@ -11,8 +11,7 @@ SECURITY RELATED THINKING
 
 1. INTRODUCTION
 
-  This file transfer protocol design is a stateless command based protocol
-  to share certain files from file server to clients.
+  This file transfer protocol design is a stateless command based protocol to share certain files from file SERVER to CLIENTs.
 
 2. TERMINOLOGY
 
@@ -74,20 +73,27 @@ SECURITY RELATED THINKING
   <COMMAND>
     The command in REQUEST or RESPONSE. All commands are listed at 4.1. and 4.2.
 
+  <COMMAND_PARAMS>
+    <COMMAND> related PARAMETERs, for example the filename for DOWNLOAD or filenames for LS.
+
   <DATA>
     Filename(s) for LIST <FUNCTION>, file content for FILE <FUNCTION>
 
   <DATA_SIZE>
     The amount of bytes in <DATA>.
 
-  <COMMAND_PARAM>
-    <COMMAND> related PARAMETER, for example the filename for DOWNLOAD.
+  <SEQ_BYTES>
+    Two-byte ID for the REQUEST or its corresponding RESPONSE. If client resends REQUEST to SERVER, <SEQ_BYTES> should be the same.
+    The first REQUEST of the connection SHOULD be valued 0000. Every new REQUEST during the connection should add one to the <SEQ_BYTES>.
 
   [] (SQUARE BRACKETS)
     Optional parts of the SYNTAX. Everything inside [] MUST be in the FUNCTION if some of it is.
 
   ; (SEMICOLON)
-    Separator character for <COMMAND_PARAM>, <DATA_SIZE>, <DATA> and CRLF. Filename MUST NOT contain SEMICOLON.
+    Separator character for <COMMAND_PARAMS>, <DATA_SIZE>, <DATA> and CRLF. Filename MUST NOT contain SEMICOLON.
+
+  b''
+    Byte value. For example b'0010'.
     
 3. ESTABLISHING CONNECTIONS
 
@@ -102,7 +108,7 @@ SECURITY RELATED THINKING
   Data transfer FUNCTIONs MUST be in text form encoded with UTF-8.
 
   SYNTAX
-    <COMMAND>[SP<COMMAND_PARAM>[;<DATA_SIZE>;<DATA>]];CRLF
+    <COMMAND>SP<SEQ_BYTES>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF
 
 4.1. REQUEST <COMMAND>
 
@@ -119,44 +125,48 @@ SECURITY RELATED THINKING
 4.2. RESPONSE <COMMAND>
 
   ACK
-    Sign of acknowledge. When QUIT command is used, SERVER MUST respond "ACK 200;CRLF" and close the connection.
-    SERVER SHOULD respond "ACK 102;CRLF" if file transfer is in progress when QUIT command is received
+    Sign of acknowledge. When REQUEST is received, SERVER MUST immiediately respond with ERROR or ACK.
+    SERVER MUST respond "ACK <SEQ_BYTES> 102;CRLF" if file transfer is in progress when QUIT command is received.
+    Else if everything is fine in REQUEST SERVER MUST send "ACK <SEQ_BYTES> 200;CRLF" before sending RESPONSE.
+    If CLIENT does not receive ACK command, it SHOULD send the same message again with same <SEQ_BYTES>.
 
   ERROR
-    Tells the client that the request could not be processed.
-    Different error messages are listed at 5.1.
+    When REQUEST is received, SERVER MUST immiediately respond with ERROR or ACK.
+    ERROR command Tells the client that the request could not be processed. Different error messages are listed at 5.1.
 
   FILE
     Returns the data to the client.
 
   LS
-    Returns list of filenames separated by SP
+    Returns list of filenames separated by SP.
 
 4.3. EXAMPLES
 
 4.3.1. SUCCESSFUL FILE DOWNLOAD
 
   REQUEST
-    DOWNLOAD file.txt;CRLF
+    DOWNLOAD b'0000' file.txt;CRLF
 
-  RESPONSE
-    FILE file.txt;<DATA_SIZE>;<DATA>;CRLF
+  RESPONSEs
+    ACK b'0000' 200;CRLF
+    FILE b'0000' file.txt;<DATA_SIZE>;<DATA>;CRLF
 
 4.3.2. LIST ALL FILES ON THE SERVER
   
   REQUEST
-    LIST;CRLF
+    LIST b'0001';CRLF
 
   RESPONSE
-    LS test.txt cat.png bull.zip;CRLF
+    ACK b'0001' 200;CRLF
+    LS b'0001' test.txt cat.png bull.zip;CRLF
 
 4.3.3. FILE NOT FOUND
 
   REQUEST
-    DOWNLOAD pork.zip;CRLF
+    DOWNLOAD b'0010' pork.zip;CRLF
 
   RESPONSE
-    ERROR 404;CRLF
+    ERROR b'0010' 404;CRLF
 
 5. ERROR CONDITIONS
 
@@ -179,20 +189,15 @@ SECURITY RELATED THINKING
 
 5.2. CONNECTION TERMINATES UNEXPECTED
 
-  Error message SHOULD be logged or printed if SOCKET terminates unexpected.
-
-5.2.1. CONNECTION TERMINATED BY CLIENT
-
-  When SOCKET is terminated by client without the use of 
-
-5.2.2. CONNECTION TERMINATED BY SERVER
+  Error message SHOULD be logged or printed if SOCKET terminates unexpected. This applies to both CLIENT and SERVER.
+  If connection to CLIENT terminates, the SERVER SHOULD continue listening to new connections.
 
 6. DATA TRANSFER SPECIFICATIONS
 
 6.1. DATA TYPES
 
-  All FUNCTIONs MUST be sent encoded as UTF-8 strings. The exception is FILE command, which MUST return <DATA> in bytes.
-  <DATA_SIZE> should be sent as four byte value. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
+  All FUNCTIONs MUST be sent encoded as UTF-8 strings except for <SEQ_BYTES> which MUST be two byte value and <DATA_SIZE> which MUST be four byte value.
+  The exception is FILE command, which MUST return <DATA> in bytes. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
 
 6.2. BYTE ORDER
 
@@ -201,5 +206,4 @@ SECURITY RELATED THINKING
 7. SECURITY
 
   This protocol SHOULD NOT be used to transfer confidential data. The file contents are sent unencrypted through SOCKET.
-  The SERVER SHOULD specify file path which acts as the DOCUMENT ROOT. CLIENT MUST NOT be able to request data from the
-  SERVER's DOCUMENT ROOT's parent folders.
+  The SERVER SHOULD specify file path which acts as the DOCUMENT ROOT. CLIENT MUST NOT be able to request data from the SERVER's DOCUMENT ROOT's parent folders.
