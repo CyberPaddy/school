@@ -84,7 +84,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
     Separator character for <COMMAND_PARAMS>, <DATA_SIZE>, <DATA> and CRLF. Filename MUST NOT contain SEMICOLON.
 
   b''
-    Byte value. For example b'0010'.
+    Byte value. For example b'0x0010'.
     
 3. ESTABLISHING CONNECTIONS
 
@@ -99,7 +99,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   Data transfer FUNCTIONs MUST be in text form encoded with UTF-8.
 
   SYNTAX
-    <COMMAND>SP<SEQ_BYTES>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF
+    <COMMAND>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF<SEQ_BYTES>
 
 4.1. REQUEST <COMMAND>
 
@@ -136,28 +136,28 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 4.3.1. SUCCESSFUL FILE DOWNLOAD
 
   REQUEST
-    DOWNLOAD b'0000' file.txt;CRLF
+    DOWNLOAD file.txt;CRLFb'0x0001'
 
   RESPONSEs
-    ACK b'0000' 200;CRLF
-    FILE b'0000' file.txt;<DATA_SIZE>;<DATA>;CRLF
+    ACK 200;CRLFb'0x0001'
+    FILE file.txt;<DATA_SIZE>;<DATA>;CRLFb'0x0001'
 
 4.3.2. LIST ALL FILES ON THE SERVER
   
   REQUEST
-    LIST b'0001';CRLF
+    LIST;CRLFb'0x0002'
 
   RESPONSE
-    ACK b'0001' 200;CRLF
-    LS b'0001' test.txt cat.png bull.zip;CRLF
+    ACK 200;CRLFb'0x0002'
+    LS test.txt cat.png bull.zip;CRLFb'0x0002'
 
 4.3.3. FILE NOT FOUND
 
   REQUEST
-    DOWNLOAD b'0010' pork.zip;CRLF
+    DOWNLOAD pork.zip;CRLFb'0x0003'
 
   RESPONSE
-    ERROR b'0010' 404;CRLF
+    ERROR 404;CRLFb'0x0003'
 
 5. ERROR CONDITIONS
 
