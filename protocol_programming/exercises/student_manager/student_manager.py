@@ -73,6 +73,7 @@ def main():
         print("2: DELETE USER")
         print("3: EDIT USER")
         print("4: PRINT USERS")
+        print("0: EXIT")
 
         try:
             choice = int(input("Choose 1-4: "))
@@ -94,10 +95,14 @@ def main():
                 print ("Student list is empty!\n")
             else:
                 students = edit_student(students)
-                print(type(students))
 
         elif choice == 4:
             print_students(students)
+
+        elif choice == 0:
+            print ("\nGoodbye!\n")
+            exit (0)
+
         else:
             print ("INVALID CHOICE\n\n")
 
