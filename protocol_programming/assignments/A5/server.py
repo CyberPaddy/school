@@ -5,7 +5,7 @@ SEQ_NUMS = []
 
 def test_one_parameter_functions(command, request, mark):
     if request[mark] != ' ':
-        print("SP Missing 1")
+        print("SP Missing for one parameter function")
         return []
 
     COMMAND_PARAM = ''
@@ -24,7 +24,7 @@ def test_ls_syntax(command, request, mark):
     if request[mark] != ' ':
         print (request[mark])
         print (type (request[mark]))
-        print("SP Missing 2")
+        print("SP Missing for LS")
         return []
     
     files = []
@@ -70,7 +70,7 @@ def test_command_parameters(command, request, mark):
     if command == 'LIST' or command == 'QUIT':
         if len(request) > mark+4:
             return []
-        print ("JEE")
+        print ("Good command:", command)
         return [request]
 
     COMMAND_PARAM = ''
@@ -83,17 +83,15 @@ def test_command_parameters(command, request, mark):
         return test_ls_syntax(command, request, mark)
 
     return test_file_syntax(command, request, mark) # The only remaining command to test is FILE
-    
-    
 
 
 # SYNTAX: <COMMAND>[SP<COMMAND_PARAM>[;<DATA_SIZE>;<DATA>]];SEQ<SEQ_BYTES>CRLF
 def parse_request(request):
     
-    print (request)
     real_command = False
-    seq_bytes = bytes(request[:-2], 'utf-8')
-    
+    seq_bytes = bytes(request[-2:], 'utf-8')
+    print("seq_bytes:",seq_bytes)
+
     # Test if the command is valid
     for valid_command in my_ftp.COMMANDS:
         mark = len(valid_command)
@@ -111,7 +109,9 @@ def parse_request(request):
         return [], ( b'ERROR 501;\r\n' + seq_bytes )
     
     return function_params, ( b'ACK 200;\r\n' + seq_bytes )
-    
+
+def handle_function(param_list):
+
 
 def main(HOST, PORT, PATH):
     print ("Starting server!\nHOST: " + HOST + "\nPORT: " + str(PORT) + "\nPATH: " + PATH)
@@ -133,11 +133,12 @@ def main(HOST, PORT, PATH):
                     break
 
             function_params, ack_bytes = parse_request(request)
+            print("ack_bytes:",ack_bytes)
             client.sendall(ack_bytes)
 
-
-
-
+            if ack_bytes[-2:] == b'ACK 200;\r\n'
+                print ("function_params:",function_params)
+                handle_function(function_params)
 
 if __name__ == '__main__' and len(sys.argv) == 4:
     HOST = sys.argv[1]
