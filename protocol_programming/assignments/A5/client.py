@@ -28,21 +28,29 @@ def test_ls_syntax(command, request, mark):
     return [command, files]
 
 def main(HOST, PORT):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.connect((HOST, PORT))
+    while True:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.connect((HOST, PORT))
+            command = input("Give command: ")
+            bytes_to_server = bytes(command + '\r\n', 'utf-8')
 
-        command = input("Give command: ")
-        bytes_to_server = bytes(command + '\r\n', 'utf-8')
+            sock.sendall(bytes_to_server)
+                    
+            recv_ack = sock.recv(16)
+            print ("Got acknowledgement:", recv_ack)
 
-        sock.sendall(bytes_to_server)
-            
-        print(sock.recv(1024))
+            if (b'200' in recv_ack) and (not 'QUIT' in command):
+                response = b''
+                while True:
+                    response += sock.recv(1024)
+                    if response[-2:] == b'\r\n':
+                        print ("RESPONSE from server:", response)
+                        break
 
-        # elif command == 'LS':
-            # return test_ls_syntax(command, request, mark)
+            if 'QUIT' in command:
+                break
 
-
-
-import sys
+                # elif command == 'LS':
+                    # return test_ls_syntax(command, request, mark)
 if __name__ == '__main__':
-    main('localhost', 13338)
+    main('localhost', 13337)
