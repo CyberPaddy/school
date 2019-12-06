@@ -81,9 +81,6 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   ; (SEMICOLON)
     Separator character for <COMMAND_PARAMS>, <DATA_SIZE>, <DATA> and CRLF. Filename MUST NOT contain SEMICOLON.
 
-  b''
-    Byte value. For example b'0x0010'.
-
 
 3. ESTABLISHING CONNECTIONS
 
