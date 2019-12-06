@@ -1,8 +1,10 @@
 SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
+
 1. INTRODUCTION
 
   This file transfer protocol design is a stateless command based protocol to share certain files from file SERVER to CLIENTs.
+
 
 2. TERMINOLOGY
 
@@ -81,7 +83,8 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   b''
     Byte value. For example b'0x0010'.
-    
+
+
 3. ESTABLISHING CONNECTIONS
 
   Connection MUST be formed via TCP SOCKET. Server has to already listen to certain port for which the clients connects to.
@@ -89,6 +92,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   Server SHOULD log or print error message when connection is terminated prematurely.
   Server SHOULD NOT print any error message if the REQUEST sent by client was answered with proper RESPONSE.
+
 
 4. DATA TRANSFER FUNCTIONS
 
@@ -131,28 +135,29 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 4.3.1. SUCCESSFUL FILE DOWNLOAD
 
   REQUEST
-    DOWNLOAD file.txt;CRLFb'0x0001'
+    DOWNLOAD file.txt;CRLF
 
   RESPONSEs
-    ACK 200;CRLFb'0x0001'
-    FILE file.txt;<DATA_SIZE>;<DATA>;CRLFb'0x0001'
+    ACK 200;CRLF
+    FILE file.txt;<DATA_SIZE>;<DATA>;CRLF
 
 4.3.2. LIST ALL FILES ON THE SERVER
   
   REQUEST
-    LIST;CRLFb'0x0002'
+    LIST;CRLF
 
   RESPONSE
-    ACK 200;CRLFb'0x0002'
-    LS test.txt cat.png bull.zip;CRLFb'0x0002'
+    ACK 200;CRLF
+    LS test.txt cat.png bull.zip;CRLF
 
 4.3.3. FILE NOT FOUND
 
   REQUEST
-    DOWNLOAD pork.zip;CRLFb'0x0003'
+    DOWNLOAD pork.zip;CRLF
 
   RESPONSE
-    ERROR 404;CRLFb'0x0003'
+    ERROR 404;CRLF
+
 
 5. ERROR CONDITIONS
 
@@ -171,12 +176,19 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
     <COMMAND> unrecognized.
 
   ERROR 501
-    SYNTAX error.
+    Unimplemented <COMMAND>.
+    For example SERVER could send ERROR 501 as an answer to RESPONSE from CLIENT
+    if SERVER never acts as a CLIENT and thus never sends any REQUESTS to any other SERVER
+  
+  ERROR 502
+    Syntax error.
+
 
 5.2. CONNECTION TERMINATES UNEXPECTED
 
   Error message SHOULD be logged or printed if SOCKET terminates unexpected. This applies to both CLIENT and SERVER.
   If connection to CLIENT terminates, the SERVER SHOULD continue listening to new connections.
+
 
 6. DATA TRANSFER SPECIFICATIONS
 
@@ -185,9 +197,11 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   All FUNCTIONs MUST be sent encoded as UTF-8 strings except for <DATA_SIZE> which MUST be four byte value.
   The exception is FILE command, which MUST return <DATA> in bytes. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
 
+
 6.2. BYTE ORDER
 
   All data sent via SOCKET MUST use BIG-ENDIAN byte order.
+
 
 7. SECURITY
 
