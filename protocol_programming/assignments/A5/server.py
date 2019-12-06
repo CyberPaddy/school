@@ -10,6 +10,8 @@ def is_valid_command(command, VALID_LIST):
             return True, parsed_command, mark
     return False, None, None
 
+
+# Tests DOWNLOAD command's syntax
 def test_one_parameter_functions(command, request, mark):
     if request[mark] != ' ':
         print("SP Missing for one parameter function", command)
@@ -18,18 +20,14 @@ def test_one_parameter_functions(command, request, mark):
     REQUEST_PARAM = ''
 
     for i in range(mark+1, len(request)-3):
-        print (request[i])
         if request[i] == ' ' or request[i] == ';': # These commands should not have multiple parameters
             return []
         REQUEST_PARAM += request[i]
 
-    print ("REQUEST_PARAM:", REQUEST_PARAM)
     return [command, REQUEST_PARAM]
 
 
 def test_request_params(command, request, mark):
-
-    print ("test_request_params", request)
 
     if len(request) < mark+3: # LIST;CRLF
         print("Some part missing")
@@ -43,7 +41,6 @@ def test_request_params(command, request, mark):
     if command == 'LIST' or command == 'QUIT':
         if len(request) > mark+3:
             return []
-        print ("Good command:", command)
         return [request]
 
     # DOWNLOAD only allows one parameter
@@ -56,7 +53,7 @@ def test_request_params(command, request, mark):
 # SYNTAX: <COMMAND>[SP<COMMAND_PARAM>[;<DATA_SIZE>;<DATA>]];CRLF
 def parse_request(request):
     # Is received request a valid COMMAND
-    real_command = is_valid_command(request, my_ftp.COMMANDS)
+    real_command, command, mark = is_valid_command(request, my_ftp.COMMANDS)
     if not real_command:
         return [], ( b'ERROR 500;\r\n' ) # 500 -> COMMAND unrecognized
 
@@ -72,8 +69,49 @@ def parse_request(request):
     
     return function_params, ( b'ACK 200;\r\n' ) # 200 -> Alles gud
 
-def handle_function(param_list):
-    return
+
+def get_download(param_list, path):
+    file_name = param_list[-1]
+    file_data = b''
+    file_path = os.getcwd() + '\\' + path + '\\' + file_name
+    with open(file_path, 'rb') as f:
+        bytes_r = f.read()
+
+    for byte in bytes_r:
+        file_data += bytes( chr(byte), 'utf-8' )
+        
+    print (file_data)
+
+    file_size = len(file_data)
+    return bytes('FILE lol.txt;' + str(file_size) + ';' + str(file_data) + ';\r\n', 'utf-8') 
+
+def get_list(param_list, path):
+    file_list = []
+
+    for root, directories, files in os.walk( os.getcwd() ):
+        for f in files:
+            file_list.append(os.path.join(root, f))
+        
+    list_content = ''
+
+    # Files in file_list have absolute path.
+    # rfind finds the LAST occurrence of '\'
+    # and then write the relative path to list_content.
+    # Files are separated by SP
+    for f in file_list:
+        list_content += f[f.rfind('\\')+1:] + ' '
+
+    return bytes('LS ' + list_content[:-1] + ';\r\n', 'utf-8')
+
+
+def get_response(param_list, path):
+    if 'DOWNLOAD' in param_list[0]:
+        return get_download(param_list, path)
+
+    if 'LIST' in param_list[0]:
+        return get_list(param_list, path)
+
+    return b'ERROR 1337' # Unknown error
 
 def main(HOST, PORT, PATH):
     print ("Starting server!\nHOST: " + HOST + "\nPORT: " + str(PORT) + "\nPATH: " + PATH)
@@ -90,18 +128,24 @@ def main(HOST, PORT, PATH):
             request = ''
             while True:
                 request += client.recv(1024).decode()
-                print (bytes(request[-2:], 'utf-8'))
                 if request[-2:] == '\r\n':
-                    print ("Client's command:", request[:-3]) # Don't print CRLF
+                    print ("Client's command:", request[:-2]) # Don't print CRLF
                     break
             
             function_params, ack_bytes = parse_request(request)
-            print("ack_bytes:",ack_bytes)
+
+            print("Sending acknowledgement:",str(ack_bytes[:-2], 'utf-8'), '\n' )
             client.sendall(ack_bytes)
 
-            if ack_bytes == b'ACK 200;\r\n':
-                print ("function_params:",function_params)
-                handle_function(function_params)
+            if ack_bytes != b'ACK 200;\r\n':
+                print ("Error sent, closing connection...")
+                continue
+
+            print ("function_params:",function_params)
+
+            response = get_response(function_params, PATH)
+            client.sendall(response)
+            print ("RESPONSE sent!")
 
 if __name__ == '__main__' and len(sys.argv) == 4:
     HOST = sys.argv[1]
@@ -118,4 +162,4 @@ if __name__ == '__main__' and len(sys.argv) == 4:
     main(HOST, PORT, PATH)
 
 elif __name__ == '__main__':
-    main('localhost', 13338, 'share/')
+    main('localhost', 13337, 'share')
