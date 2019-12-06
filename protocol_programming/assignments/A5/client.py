@@ -5,7 +5,7 @@ def main(HOST, PORT):
         sock.connect((HOST, PORT))
 
         command = input("Give command: ")
-        bytes_to_server = bytes(command, 'utf-8') + b'\r\n\x00\x01'
+        bytes_to_server = bytes(command, 'utf-8')
 
         sock.sendall(bytes_to_server)
             

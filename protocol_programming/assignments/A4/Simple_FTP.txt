@@ -73,10 +73,6 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   <DATA_SIZE>
     The amount of bytes in <DATA>.
 
-  <SEQ_BYTES>
-    Two-byte ID for the REQUEST or its corresponding RESPONSE. If client resends REQUEST to SERVER, <SEQ_BYTES> should be the same.
-    The first REQUEST of the connection SHOULD be valued 0000. Every new REQUEST during the connection should add one to the <SEQ_BYTES>.
-
   [] (SQUARE BRACKETS)
     Optional parts of the SYNTAX. Everything inside [] MUST be in the FUNCTION if some of it is.
 
@@ -99,7 +95,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   Data transfer FUNCTIONs MUST be in text form encoded with UTF-8.
 
   SYNTAX
-    <COMMAND>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF<SEQ_BYTES>
+    <COMMAND>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF
 
 4.1. REQUEST <COMMAND>
 
@@ -117,9 +113,8 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   ACK
     Sign of acknowledge. When REQUEST is received, SERVER MUST immiediately respond with ERROR or ACK.
-    SERVER MUST respond "ACK <SEQ_BYTES> 102;CRLF" if file transfer is in progress when QUIT command is received.
-    Else if everything is fine in REQUEST SERVER MUST send "ACK <SEQ_BYTES> 200;CRLF" before sending RESPONSE.
-    If CLIENT does not receive ACK command, it SHOULD send the same message again with same <SEQ_BYTES>.
+    SERVER SHOULD respond "ACK 102;CRLF" if file transfer is in progress when QUIT command is received.
+    Else if everything is fine in REQUEST SERVER MUST send "ACK 200;CRLF" before sending RESPONSE.
 
   ERROR
     When REQUEST is received, SERVER MUST immiediately respond with ERROR or ACK.
@@ -187,7 +182,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
 6.1. DATA TYPES
 
-  All FUNCTIONs MUST be sent encoded as UTF-8 strings except for <SEQ_BYTES> which MUST be two byte value and <DATA_SIZE> which MUST be four byte value.
+  All FUNCTIONs MUST be sent encoded as UTF-8 strings except for <DATA_SIZE> which MUST be four byte value.
   The exception is FILE command, which MUST return <DATA> in bytes. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
 
 6.2. BYTE ORDER
