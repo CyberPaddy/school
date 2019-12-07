@@ -72,9 +72,6 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   <DATA>
     Filename(s) for LIST <FUNCTION>, file content for FILE <FUNCTION>
 
-  <DATA_SIZE>
-    The amount of bytes in <DATA>.
-
   [] (SQUARE BRACKETS)
     Optional parts of the SYNTAX. Everything inside [] MUST be in the FUNCTION if some of it is.
 
@@ -96,7 +93,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   Data transfer FUNCTIONs MUST be in text form encoded with UTF-8.
 
   SYNTAX
-    <COMMAND>[SP<COMMAND_PARAMS>[;<DATA_SIZE>;<DATA>]];CRLF
+    <COMMAND>[SP<COMMAND_PARAMS>[;<DATA>]];CRLF
 
 4.1. REQUEST <COMMAND>
 
@@ -136,7 +133,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   RESPONSEs
     ACK 200;CRLF
-    FILE file.txt;<DATA_SIZE>;<DATA>;CRLF
+    FILE file.txt;<DATA>;CRLF
 
 4.3.2. LIST ALL FILES ON THE SERVER
   
@@ -191,8 +188,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
 6.1. DATA TYPES
 
-  All FUNCTIONs MUST be sent encoded as UTF-8 strings except for <DATA_SIZE> which MUST be four byte value.
-  The exception is FILE command, which MUST return <DATA> in bytes. The maximum size of <DATA> SHOULD be 4294967295 (unsigned 4 byte integer).
+  All FUNCTIONs MUST be sent encoded as UTF-8 strings. The exception is FILE command, which MUST return <DATA> in bytes.
 
 
 6.2. BYTE ORDER
