@@ -11,12 +11,12 @@ def print_error(command, error):
         print ("Syntax error, please check command!\n")
 
 def create_file(response):
+    print (response)
     mark = response.find(b';')            # The spot of first semicolon in response
 
-    file_name = response[ response.find(b' ')+1 : mark ]
-    data_start  = response.find(b';', mark+1) +1      # Start index of <DATA>
+    file_name   = str( response[ response.find(b' ')+1 : mark ], 'utf-8' )
+    data_start  = mark + 1      # Start index of <DATA>
     data_end    = response.find(b';\r\n', data_start+1)   # End index of <DATA>
-    file_size = int( response[ mark+1 : data_start-1 ] )
 
     data = response[ data_start : data_end ]
     print (data)
