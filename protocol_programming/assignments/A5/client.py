@@ -27,6 +27,18 @@ def test_ls_syntax(command, request, mark):
     print ("FILES =", files)
     return [command, files]
 
+
+def print_error(command, error):
+    if error == 'ERROR 500':
+        print ("Unrecognized command: '" + command + "'\n")
+
+    if error == 'ERROR 501':
+        print ("The command '" + command + "' is reserved for servers\n")
+    
+    if error == 'ERROR 502':
+        print ("Syntax error, please check command!\n")
+    
+
 def main(HOST, PORT):
     while True:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -36,19 +48,22 @@ def main(HOST, PORT):
 
             sock.sendall(bytes_to_server)
                     
-            recv_ack = sock.recv(16)
-            print ("Got acknowledgement:", recv_ack)
+            recv_ack = sock.recv(16).decode('utf-8')
+            print ("\nGot acknowledgement:", recv_ack[:-3])
 
-            if (b'200' in recv_ack) and (not 'QUIT' in command):
+            if command == 'QUIT;':
+                break
+
+            if recv_ack != 'ACK 200;\r\n':
+                print_error( command, recv_ack[:-3] )
+
+            else:
                 response = b''
                 while True:
                     response += sock.recv(1024)
                     if response[-2:] == b'\r\n':
                         print ("RESPONSE from server:", response)
                         break
-
-            if 'QUIT' in command:
-                break
 
                 # elif command == 'LS':
                     # return test_ls_syntax(command, request, mark)
