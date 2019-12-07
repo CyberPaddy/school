@@ -89,6 +89,7 @@ def get_download(param_list, path):
 
     return b'FILE ' + bytes(file_name, 'utf-8') + b';' + file_data + b';\r\n' 
 
+
 def get_list(param_list, path):
     file_list = []
 
@@ -117,6 +118,7 @@ def get_response(param_list, path):
 
     return b'ERROR 1337' # Unknown error
 
+
 def send_data(data, sock, msg_type):
     try:
         sock.sendall(data)
@@ -124,6 +126,7 @@ def send_data(data, sock, msg_type):
         print ("Error sending data to client:", e)
     else:
         print (msg_type, "sent!")
+
 
 def main(HOST, PORT, PATH):
     print ("Starting server!\nHOST: " + HOST + "\nPORT: " + str(PORT) + "\nPATH: " + PATH)
