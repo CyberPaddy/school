@@ -1,12 +1,12 @@
 SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
-
 1. INTRODUCTION
 
   This file transfer protocol design is a stateless command based protocol to share certain files from file SERVER to CLIENTs.
 
 
 2. TERMINOLOGY
+
 
 2.1. DOCUMENT
 
@@ -55,6 +55,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   SYNTAX
     The order of operations for FUNCTION.
 
+
 2.2. SYNTAX SPECIFIC TERMINOLOGY
 
   CRLF
@@ -95,6 +96,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   SYNTAX
     <COMMAND>[SP<COMMAND_PARAMS>[;<DATA>]];CRLF
 
+
 4.1. REQUEST <COMMAND>
 
   LIST
@@ -106,6 +108,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
   QUIT
     Terminates SOCKET if file transfer is not in progress. If transfer is in progress, the connection should remain established
     until file transfer is completed.
+
 
 4.2. RESPONSE <COMMAND>
 
@@ -123,6 +126,7 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   LS
     Returns list of filenames separated by SP.
+
 
 4.3. EXAMPLES
 
@@ -157,7 +161,8 @@ SIMPLE FTP DESIGN BY TEEMU PÄTSI
 
   Error MUST be raised if requested FUNCTION cannot be finished
   or requested data is not found or available for the requester.
-  
+
+
 5.1. ERROR MESSAGES
 
   ERROR 403
