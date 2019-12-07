@@ -83,6 +83,10 @@ def get_download(param_list, path):
         print ("Requested file", file_name, "is not found")
         return bytes("ERROR 404;\r\n", 'utf-8')
 
+    except PermissionError:
+        print ("The current user doen not have permissions to read", file_name)
+        return bytes("ERROR 403;\r\n", 'utf-8')
+
     return b'FILE ' + bytes(file_name, 'utf-8') + b';' + file_data + b';\r\n' 
 
 def get_list(param_list, path):
@@ -113,9 +117,17 @@ def get_response(param_list, path):
 
     return b'ERROR 1337' # Unknown error
 
+def send_data(data, sock, msg_type):
+    try:
+        sock.sendall(data)
+    except socket.error as e:
+        print ("Error sending data to client:", e)
+    else:
+        print (msg_type, "sent!")
+
 def main(HOST, PORT, PATH):
     print ("Starting server!\nHOST: " + HOST + "\nPORT: " + str(PORT) + "\nPATH: " + PATH)
-
+    
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind((HOST, PORT))
         sock.listen(5)
@@ -134,18 +146,17 @@ def main(HOST, PORT, PATH):
             
             function_params, ack_bytes = parse_request(request)
 
-            print("Sending acknowledgement:",str(ack_bytes[:-2], 'utf-8'))
-            client.sendall(ack_bytes)
+            # Params: data, socket, msg_type
+            send_data( ack_bytes, client, 'Acknowledgement' )
 
             if ack_bytes != b'ACK 200;\r\n':
-                print ("Error sent, closing connection...")
+                print ("Error sent to client, closing connection...")
                 continue
-
-            print ("function_params:",function_params)
-
+            
+            # Generate and send response
             response = get_response(function_params, PATH)
-            client.sendall(response)
-            print ("RESPONSE sent!")
+            send_data(response, client, 'Response')
+
 
 if __name__ == '__main__' and len(sys.argv) == 4:
     HOST = sys.argv[1]
