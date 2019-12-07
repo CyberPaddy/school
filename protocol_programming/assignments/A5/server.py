@@ -88,7 +88,7 @@ def get_download(param_list, path):
 def get_list(param_list, path):
     file_list = []
 
-    for root, directories, files in os.walk( os.getcwd() ):
+    for root, directories, files in os.walk( os.getcwd() + '\\' +path):
         for f in files:
             file_list.append(os.path.join(root, f))
         
@@ -134,7 +134,7 @@ def main(HOST, PORT, PATH):
             
             function_params, ack_bytes = parse_request(request)
 
-            print("Sending acknowledgement:",str(ack_bytes[:-2], 'utf-8'), '\n' )
+            print("Sending acknowledgement:",str(ack_bytes[:-2], 'utf-8'))
             client.sendall(ack_bytes)
 
             if ack_bytes != b'ACK 200;\r\n':
