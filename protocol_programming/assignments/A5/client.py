@@ -12,7 +12,6 @@ def print_error(command, error):
 
 
 def create_file(response):
-    print (response)
     mark = response.find(b';')            # The spot of first semicolon in response
 
     file_name   = str( response[ response.find(b' ')+1 : mark ], 'utf-8' )

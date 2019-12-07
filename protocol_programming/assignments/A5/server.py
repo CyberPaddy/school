@@ -142,7 +142,7 @@ def main(HOST, PORT, PATH):
 
             request = ''
             while True:
-                request += client.recv(1024).decode()
+                request += client.recv(4096).decode()
                 if request[-2:] == '\r\n':
                     print ("Client's command:", request[:-2]) # Don't print CRLF
                     break
