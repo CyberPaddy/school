@@ -74,16 +74,16 @@ def get_download(param_list, path):
     file_name = param_list[-1]
     file_data = b''
     file_path = os.getcwd() + '\\' + path + '\\' + file_name
-    with open(file_path, 'rb') as f:
-        bytes_r = f.read()
 
-    for byte in bytes_r:
-        file_data += bytes( chr(byte), 'utf-8' )
-        
-    print (file_data)
+    try:
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
 
-    file_size = len(file_data)
-    return bytes('FILE lol.txt;' + str(file_size) + ';' + str(file_data) + ';\r\n', 'utf-8') 
+    except FileNotFoundError:
+        print ("Requested file", file_name, "is not found")
+        return bytes("ERROR 404;\r\n", 'utf-8')
+
+    return b'FILE ' + bytes(file_name, 'utf-8') + b';' + file_data + b';\r\n' 
 
 def get_list(param_list, path):
     file_list = []
