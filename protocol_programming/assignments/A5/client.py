@@ -1,71 +1,72 @@
 import socket
 
-# Syntax example: LS text.txt pic.jpg;CRLF
-def test_ls_syntax(command, request, mark):
-
-    if request[mark] != ' ':
-        print (request[mark])
-        print (type (request[mark]))
-        print("SP Missing for LS")
-        return []
-
-    files = []
-    COMMAND_PARAM = ''
-
-    for i in range(mark+1, len(request)):
-        if request[i] == ';': # LS command should only contain SP, not SEMICOLON
-            return []
-        if request[i] == ' ':
-            files.append(COMMAND_PARAM)
-            COMMAND_PARAM = ''
-            continue
-
-        COMMAND_PARAM += request[i]
-
-    files.append(COMMAND_PARAM)
-
-    print ("FILES =", files)
-    return [command, files]
-
-
 def print_error(command, error):
     if error == 'ERROR 500':
         print ("Unrecognized command: '" + command + "'\n")
 
     if error == 'ERROR 501':
-        print ("The command '" + command + "' is reserved for servers\n")
+        print ("This command is reserved for servers\n")
     
     if error == 'ERROR 502':
         print ("Syntax error, please check command!\n")
-    
+
+def create_file(response):
+    mark = response.find(b';')            # The spot of first semicolon in response
+
+    file_name = response[ response.find(b' ')+1 : mark ]
+    data_start  = response.find(b';', mark+1) +1      # Start index of <DATA>
+    data_end    = response.find(b';\r\n', data_start+1)   # End index of <DATA>
+    file_size = int( response[ mark+1 : data_start-1 ] )
+
+    data = response[ data_start : data_end ]
+    print (data)
+
+    try:
+        with open (file_name, 'wb') as f:
+            f.write(data)
+    except Exception as e:
+        print (e)
+    else:
+        print ("Downloaded file", file_name)
+            
 
 def main(HOST, PORT):
     while True:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             sock.connect((HOST, PORT))
-            command = input("Give command: ")
+            command = input("\nGive command: ")
             bytes_to_server = bytes(command + '\r\n', 'utf-8')
 
             sock.sendall(bytes_to_server)
-                    
+            
+            # Get ACK or ERROR message from server
             recv_ack = sock.recv(16).decode('utf-8')
-            print ("\nGot acknowledgement:", recv_ack[:-3])
+            msg_type = 'acknowledgement:' if recv_ack == 'ACK 200;\r\n' else 'error:'
+            print ("\nServer sent" , msg_type, recv_ack[:-3])
 
             if command == 'QUIT;':
                 break
-
+            
+            # Handle ERROR messages from server
             if recv_ack != 'ACK 200;\r\n':
                 print_error( command, recv_ack[:-3] )
-
+            
             else:
                 response = b''
                 while True:
                     response += sock.recv(1024)
                     if response[-2:] == b'\r\n':
-                        print ("RESPONSE from server:", response)
                         break
+                
+                if response == b'ERROR 404;\r\n':
+                    print ("File was not found from the server\nCheck available files with LIST command\n")
 
-                # elif command == 'LS':
-                    # return test_ls_syntax(command, request, mark)
+                if response[:4] == b'FILE':
+                    create_file(response)
+                
+                if response[:2] == b'LS':
+                    print( str(response[3:-3], 'utf-8') )   # Prints files separated with SP
+
+
 if __name__ == '__main__':
     main('localhost', 13337)
