@@ -10,6 +10,7 @@ def print_error(command, error):
     if error == 'ERROR 502':
         print ("Syntax error, please check command!\n")
 
+
 def create_file(response):
     print (response)
     mark = response.find(b';')            # The spot of first semicolon in response
@@ -19,6 +20,7 @@ def create_file(response):
     data_end    = response.find(b';\r\n', data_start+1)     # End index of <DATA>
     data = response[ data_start : data_end ]
 
+    # Write downloaded data to file
     try:
         with open (file_name, 'wb') as f:
             f.write(data)
@@ -77,6 +79,9 @@ def main(HOST, PORT):
             print ("Server is not active at", HOST, "port", PORT)
             exit(1)
 
+        except socket.error as e:
+            print ("Error with socket:", e)
+            exit(1)
 
 
 if __name__ == '__main__':
